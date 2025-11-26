@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/local.js",
-    "start": "node src/local.js",
+    "start": "node src/server.js",
     "db:migrate": "sequelize db:migrate",
     "db:seed": "sequelize db:seed:all",
     "db:undo": "sequelize db:migrate:undo",
