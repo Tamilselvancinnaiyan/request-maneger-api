@@ -2,14 +2,16 @@ require("./config/env");
 const app = require("./app");
 const { sequelize } = require("./models");
 
+const PORT = process.env.PORT || 4000;
+
 (async () => {
   try {
     await sequelize.authenticate();
     console.log("DB connected");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
   } catch (err) {
     console.error("Unable to connect to DB", err);
   }
 })();
-
-module.exports = app;
-
