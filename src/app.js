@@ -6,18 +6,20 @@ const { errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://requestmaneger.vercel.app",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://requestmaneger.vercel.app"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
-
+app.options("*", cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
