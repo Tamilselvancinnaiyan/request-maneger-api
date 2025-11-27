@@ -1,48 +1,61 @@
 const { createLogger, format, transports } = require("winston");
-const { combine, timestamp, printf, errors, json, colorize } = format;
+const { combine, timestamp, printf, errors, colorize, json } = format;
 const DailyRotateFile = require("winston-daily-rotate-file");
+const fs = require("fs");
+const path = require("path");
 
-// Custom console format (color + requestId)
+const isVercel = process.env.VERCEL === true;
+
 const logFormat = printf(({ level, message, timestamp, requestId, stack }) => {
   return `${timestamp} [${level}] [REQ-ID: ${requestId ?? "N/A"}] : ${
     stack || message
   }`;
 });
 
-// Create Logger
 const logger = createLogger({
   level: "info",
   format: combine(
     timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    errors({ stack: true }), // capture stack trace
+    errors({ stack: true }),
     json()
   ),
-  transports: [
-    new transports.File({
-      filename: "logs/combined.log",
-    }),
-    new transports.File({
-      filename: "logs/error.log",
-      level: "error",
-    }),
+  transports: [],
+});
 
-    // Daily rotate
+if (!isVercel ) {
+  const logDir = path.join(__dirname, "../../logs");
+
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
+
+  logger.add(
+    new transports.File({
+      filename: path.join(logDir, "combined.log"),
+    })
+  );
+
+  logger.add(
+    new transports.File({
+      filename: path.join(logDir, "error.log"),
+      level: "error",
+    })
+  );
+
+  logger.add(
     new DailyRotateFile({
-      dirname: "logs/daily",
+      dirname: path.join(logDir, "daily"),
       filename: "app-%DATE%.log",
       datePattern: "YYYY-MM-DD",
       maxFiles: "14d",
     }),
-  ],
-});
-
-// Console output only in dev
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
-    new transports.Console({
-      format: combine(colorize(), logFormat),
-    })
   );
 }
+
+logger.add(
+  new transports.Console({
+    format: combine(colorize(), logFormat),
+  })
+);
 
 module.exports = logger;
