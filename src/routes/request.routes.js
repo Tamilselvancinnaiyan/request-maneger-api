@@ -6,7 +6,7 @@ const enum_helper = require ('../utils/enum')
 
 router.use(authenticate);
 
-router.get(
+router.post(
   "/create",
   authorizeRole([enum_helper.ROLES.EMPLOYEE]),
   requestController.create
