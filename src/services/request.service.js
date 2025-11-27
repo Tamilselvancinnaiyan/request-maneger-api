@@ -77,7 +77,7 @@ console.log(employeeIds)
 exports.approve = async ({ userId, requestId }) => {
   const req = await findRequestOrThrow(requestId);
 
-  if (req.status !== "ASSIGNED") {
+  if (req.status== "ASSIGNED" && req.status !== "REJECTED") {
     const err = new Error("Only pending requests can be approved");
     err.status = 400;
     throw err;

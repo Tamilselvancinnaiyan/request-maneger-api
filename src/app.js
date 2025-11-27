@@ -1,8 +1,9 @@
 const express = require("express");
-const morgan = require("morgan");
+const requestId = require("./middleware/requestId");
 const cors = require("cors"); 
 const routes = require("./routes");
 const { errorHandler } = require("./middleware/errorHandler");
+const logger = require('./utils/logger');
 
 const app = express();
 
@@ -11,6 +12,13 @@ const allowedOrigins = [
   "https://requestmaneger.vercel.app",
   "https://requestmaneger.vercel.app/",
 ];
+
+app.use(requestId);
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.originalUrl}`, { requestId: req.requestId });
+  next();
+});
+
 
 app.use(
   cors({
@@ -22,7 +30,6 @@ app.use(
 );
 app.options("*", cors());
 app.use(express.json());
-app.use(morgan("dev"));
 
 app.use("/api", routes);
 

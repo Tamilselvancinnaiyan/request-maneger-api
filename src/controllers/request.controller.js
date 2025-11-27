@@ -23,9 +23,6 @@ exports.list = async (req, res, next) => {
 
 exports.all = async (req, res, next) => {
   try {
-    console.log('====================================');
-    console.log("loggerrrrrrr");
-    console.log('====================================');
     const requests = await requestService.listForManager(req.user);
     res.json({ requests });
   } catch (err) {
