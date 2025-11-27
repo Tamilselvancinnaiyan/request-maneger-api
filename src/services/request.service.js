@@ -46,7 +46,6 @@ exports.listForUser = async (user) => {
 };
 
 exports.listForManager = async (user) => {
-  console.log(user)
   const mappings = await EmployeeMapping.findAll({
     where: { manager_user_id: user.id },
     attributes: ["employee_user_id"],
