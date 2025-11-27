@@ -15,5 +15,19 @@ exports.list = async (req, res, next) => {
     next(err);
   }
 };
+exports.listManager = async (req, res, next) => {
+  try {
+
+    const users = await userService.getManagerList();
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      users,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 
