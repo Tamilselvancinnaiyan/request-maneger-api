@@ -91,7 +91,7 @@ exports.approve = async ({ userId, requestId }) => {
 exports.reject = async ({ userId, requestId }) => {
   const req = await findRequestOrThrow(requestId);
 
-  if (req.status !== "ASSIGNED") {
+  if (req.status !== "ASSIGNED" && req.status !== "APPROVED") {
     const err = new Error("Only pending requests can be rejected");
     err.status = 400;
     throw err;

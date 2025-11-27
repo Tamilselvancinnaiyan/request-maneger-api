@@ -13,11 +13,11 @@ const allowedOrigins = [
   "https://requestmaneger.vercel.app/",
 ];
 
-app.use(requestId);
-app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.originalUrl}`, { requestId: req.requestId });
-  next();
-});
+// app.use(requestId);
+// app.use((req, res, next) => {
+//   logger.info(`${req.method} ${req.originalUrl}`, { requestId: req.requestId });
+//   next();
+// });
 
 
 app.use(
