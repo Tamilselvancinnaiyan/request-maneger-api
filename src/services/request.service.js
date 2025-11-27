@@ -1,5 +1,6 @@
 const { Request, User , EmployeeMapping} = require("../models");
 const { Op } = require("sequelize");
+const enum_helper = require ('../utils/enum')
 
 async function findRequestOrThrow(id) {
   const req = await Request.findByPk(id);
@@ -20,7 +21,7 @@ exports.create = async ({ userId, payload }) => {
     description,
     created_by: userId,
     assigned_to: assigneeId,
-    status: "ASSIGNED",
+    status: enum_helper.STATUS.ASSIGNED,
   });
 
   return request;
@@ -52,7 +53,6 @@ exports.listForManager = async (user) => {
   });
 
   const employeeIds = mappings.map((m) => m.employee_user_id);
-console.log(employeeIds)
   if (employeeIds.length === 0) {
     return []; 
   }
@@ -77,13 +77,13 @@ console.log(employeeIds)
 exports.approve = async ({ userId, requestId }) => {
   const req = await findRequestOrThrow(requestId);
 
-  if (req.status== "ASSIGNED" && req.status !== "REJECTED") {
+  if (req.status !== enum_helper.STATUS.ASSIGNED && req.status !== enum_helper.STATUS.REJECTED ) {
     const err = new Error("Only pending requests can be approved");
     err.status = 400;
     throw err;
   }
 
-  req.status = "APPROVED";
+  req.status = enum_helper.STATUS.APPROVED;
   await req.save();
   return req;
 };
@@ -91,13 +91,13 @@ exports.approve = async ({ userId, requestId }) => {
 exports.reject = async ({ userId, requestId }) => {
   const req = await findRequestOrThrow(requestId);
 
-  if (req.status !== "ASSIGNED" && req.status !== "APPROVED") {
+  if (req.status!== enum_helper.STATUS.ASSIGNED && req.status !== enum_helper.STATUS.APPROVED) {
     const err = new Error("Only pending requests can be rejected");
     err.status = 400;
     throw err;
   }
 
-  req.status = "REJECTED";
+  req.status = enum_helper.STATUS.REJECTED;
   await req.save();
   return req;
 };
@@ -105,7 +105,7 @@ exports.reject = async ({ userId, requestId }) => {
 exports.close = async ({ userId, requestId }) => {
   const req = await findRequestOrThrow(requestId); 
 
-  if (req.status !== "APPROVED") {
+  if (req.status !== enum_helper.STATUS.APPROVED) {
     const err = new Error("Only approved requests can be closed");
     err.status = 400;
     throw err;
@@ -117,7 +117,7 @@ exports.close = async ({ userId, requestId }) => {
     throw err;
   }
 
-  req.status = "CLOSED";  
+  req.status =enum_helper.STATUS.CLOSED;  
   await req.save();    
   return req;
 };

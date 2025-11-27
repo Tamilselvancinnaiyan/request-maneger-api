@@ -1,0 +1,14 @@
+
+const ROLES = {
+  MANAGER: "MANAGER",
+  EMPLOYEE: "EMPLOYEE",
+}
+
+const STATUS = {
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+  ASSIGNED: "ASSIGNED",
+  CLOSED : "CLOSED"
+};
+
+module.exports = { ROLES, STATUS };
